@@ -1,0 +1,23 @@
+{
+  "name": "rayocaster-control",
+  "version": "3.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Consola web RayoCaster habilitada exclusivamente mediante RayoCaster Desktop y Firebase Authentication.",
+  "engines": { "node": ">=20.0.0" },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "node server/local-server.js",
+    "start": "node server/local-server.js",
+    "test": "node --test tests/*.test.js",
+    "verify": "npm test && npm run build && node scripts/verify-package.js",
+    "check:env": "node scripts/check-env.js",
+    "generate:keys": "node scripts/generate-stream-keys.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "firebase-admin": "^14.1.0"
+  },
+  "overrides": { "uuid": "11.1.1" }
+}
