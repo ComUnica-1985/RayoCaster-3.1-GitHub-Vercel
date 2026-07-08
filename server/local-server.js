@@ -32,8 +32,4 @@ const routes = {
 for (const [route, handler] of Object.entries(routes)) app.all(route, (req, res) => handler(req, res));
 app.use(express.static(path.join(root, "public"), { etag: true, maxAge: "1h" }));
 app.get("*", (_req, res) => res.sendFile(path.join(root, "public/index.html")));
-<<<<<<< HEAD
 app.listen(port, "0.0.0.0", () => console.log(`RayoCaster control 4.0: http://localhost:${port}`));
-=======
-app.listen(port, "0.0.0.0", () => console.log(`RayoCaster control 3.1: http://localhost:${port}`));
->>>>>>> dba596d41223502bc642be675fb4b0ce4d0b9ae5
