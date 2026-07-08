@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.data/
+*.log
+*.pem
+*.key
+service-account*.json
+firebase-adminsdk*.json
+.DS_Store
+deployment-secrets.txt
+desktop-public-config.txt
+*.firebase-admin.json

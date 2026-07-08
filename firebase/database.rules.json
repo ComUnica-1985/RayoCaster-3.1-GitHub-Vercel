@@ -1,0 +1,27 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rayocaster": {
+      "profiles": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": false
+        }
+      },
+      "desktopLeases": {
+        "$uid": {
+          "$deviceId": {
+            ".read": "auth != null && auth.uid === $uid",
+            ".write": "auth != null && auth.uid === $uid",
+            ".validate": "newData.hasChildren(['online','lastSeen','expiresAt','version','machine','os','gatewayOnline']) && newData.child('online').isBoolean() && newData.child('gatewayOnline').isBoolean() && newData.child('lastSeen').isNumber() && newData.child('expiresAt').isNumber() && newData.child('version').isString() && newData.child('version').val().length <= 40 && newData.child('machine').isString() && newData.child('machine').val().length <= 80 && newData.child('os').isString() && newData.child('os').val().length <= 40 && (!newData.child('gatewayUrl').exists() || (newData.child('gatewayUrl').isString() && newData.child('gatewayUrl').val().matches(/^https:\\/\\/[a-z0-9-]+\\.trycloudflare\\.com$/)))"
+          }
+        }
+      },
+      "webAccessCodes": {
+        ".read": false,
+        ".write": false
+      }
+    }
+  }
+}
