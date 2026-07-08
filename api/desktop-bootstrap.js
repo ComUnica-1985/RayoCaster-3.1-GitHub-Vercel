@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     const code = await createOneTimeCode(user);
     const origin = ownOrigin(req);
     if (!origin) return json(res, 500, { ok: false, error: "No se pudo resolver el dominio de la consola." });
-    return json(res, 200, { ok: true, launchUrl: `${origin}/api/desktop-exchange?code=${encodeURIComponent(code)}`, expiresIn: Number(process.env.BOOTSTRAP_CODE_SECONDS || 90) });
+    return json(res, 200, { ok: true, launchUrl: `${origin}/#desktopCode=${encodeURIComponent(code)}`, expiresIn: Number(process.env.BOOTSTRAP_CODE_SECONDS || 90) });
   } catch (error) {
     console.error("desktop-bootstrap", error?.message || error);
     const known = {

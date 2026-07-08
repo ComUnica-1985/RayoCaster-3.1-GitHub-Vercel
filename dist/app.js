@@ -80,6 +80,20 @@ async function showAuthenticated(user) {
 function showLocked(message = "Abra esta consola desde RayoCaster Desktop después de iniciar sesión.") {
   state.user = null; state.runtime = null; refs.authView.hidden = false; refs.appView.hidden = true; refs.passwordModal.hidden = true; refs.adminModal.hidden = true; refs.accessError.textContent = message;
 }
+async function exchangeDesktopCode() {
+  const match = location.hash.match(/(?:^#|&)desktopCode=([^&]+)/);
+  if (!match) return false;
+  const code = decodeURIComponent(match[1]);
+  history.replaceState(null, "", `${location.pathname}${location.search}`);
+  refs.accessError.textContent = "Validando acceso del ejecutable...";
+  try {
+    await api("/api/desktop-exchange", { method: "POST", body: JSON.stringify({ code }) });
+    return true;
+  } catch (error) {
+    showLocked(error.message || "El acceso de un solo uso no pudo validarse.");
+    return false;
+  }
+}
 async function restoreSession() {
   refs.accessError.textContent = "";
   try { const payload = await api("/api/auth-me"); await showAuthenticated(payload.user); }
@@ -340,7 +354,11 @@ window.addEventListener("beforeunload", () => { try { state.socket?.close(); } c
 document.addEventListener("visibilitychange", () => { if (document.hidden) setCough(false); });
 
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
-restoreSession();
+(async () => {
+  const exchanged = await exchangeDesktopCode();
+  if (exchanged) await restoreSession();
+  else if (!location.hash.includes("desktopCode=")) await restoreSession();
+})();
 setInterval(async () => {
   if (!state.user) return;
   try { await api("/api/auth-me"); }

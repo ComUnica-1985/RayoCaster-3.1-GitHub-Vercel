@@ -1,4 +1,4 @@
-const CACHE = "rayocaster-v3-1";
+const CACHE = "rayocaster-v4-0-2";
 const CORE = [
   "/",
   "/index.html",
