@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#202226" />
+  <meta name="description" content="Consola universitaria de transmisión en vivo" />
+  <title>RayoCaster</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <section id="AuthView" class="auth-view">
+    <div class="auth-card">
+      <div class="brand-mark" aria-hidden="true">RC</div>
+      <p class="eyebrow">Radio universitaria</p>
+      <h1>RayoCaster</h1>
+      <p class="muted">La consola permanece bloqueada. Inicie sesión en RayoCaster Desktop y use el botón <strong>Abrir consola web</strong>.</p>
+      <button id="BtnRetryAccess" class="button primary" type="button">Comprobar acceso</button>
+      <p id="AccessError" class="form-error" role="alert"></p>
+    </div>
+  </section>
+
+  <div id="AppView" class="app-view" hidden>
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-mark small" aria-hidden="true">RC</div>
+        <div><strong>RayoCaster</strong><span id="StationName">Radio universitaria</span></div>
+      </div>
+      <div class="air-state" aria-live="polite">
+        <span id="AirDot" class="air-dot"></span>
+        <span id="AirText">EN ESPERA</span>
+        <time id="TimerPill">00:00</time>
+      </div>
+      <div class="header-actions">
+        <span id="CurrentUser" class="user-chip"></span>
+        <button id="BtnAdmin" class="button quiet compact" type="button" hidden>Usuarios</button>
+        <button id="BtnLogout" class="button quiet compact" type="button">Salir</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="stack control-column">
+        <section class="panel">
+          <div class="panel-heading"><div><p class="eyebrow">Transmisión</p><h2>Control de aire</h2></div></div>
+          <p id="Status" class="status">Consola sin preparar.</p>
+          <button id="BtnPreload" class="button primary full" type="button">Preparar consola</button>
+          <div id="ReadyControls" hidden>
+            <label>Micrófono
+              <div class="inline-control"><select id="MicSelect"><option>Cargando dispositivos...</option></select><button id="BtnReloadMics" class="icon-button" type="button" aria-label="Recargar micrófonos">↻</button></div>
+            </label>
+            <label>Salida del monitor
+              <div class="inline-control"><select id="MonitorOutputSelect"><option value="">Salida predeterminada</option></select><button id="BtnReloadOutputs" class="icon-button" type="button" aria-label="Recargar salidas">↻</button></div>
+            </label>
+            <label>Ganancia <span id="GainLabel" class="value">100%</span><input id="Gain" type="range" min="0" max="200" value="100" /></label>
+            <div class="button-grid">
+              <button id="BtnPlay" class="button primary" disabled type="button">Iniciar emisión</button>
+              <button id="BtnStop" class="button danger" disabled type="button">Detener</button>
+              <button id="BtnCough" class="button quiet" disabled type="button">Modo tos</button>
+              <button id="BtnMonitor" class="button quiet" type="button">Monitor</button>
+            </div>
+          </div>
+          <div id="Alert" class="notice" hidden><span id="AlertText"></span><button id="BtnCloseAlert" type="button" aria-label="Cerrar">×</button></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><div><p class="eyebrow">Señal</p><h2>Monitor</h2></div></div>
+          <canvas id="VisualizerCanvas" width="360" height="130" aria-label="Forma de onda"></canvas>
+        </section>
+      </aside>
+
+      <section class="panel deck-panel">
+        <div class="panel-heading"><div><p class="eyebrow">RayoDeck</p><h2>Reproducción</h2></div><span id="DeckName" class="track-name">Sin audio</span></div>
+        <div class="DeckTabs" role="tablist">
+          <button class="DeckTab is-active" type="button" data-category="musica">Música</button>
+          <button class="DeckTab" type="button" data-category="voces">Voces</button>
+          <button class="DeckTab" type="button" data-category="cunas">Cuñas</button>
+        </div>
+        <label class="DropZone">Arrastra audios o selecciónalos<input type="file" id="DeckFile" accept="audio/*" multiple hidden /></label>
+        <div id="PlaylistContainer" class="PlaylistContainer"><p class="empty-state">No hay audios cargados en esta categoría.</p></div>
+        <div class="DeckTransportBar">
+          <span id="DeckTime">0:00</span>
+          <button id="DeckPlay" class="button quiet compact" disabled type="button">PLAY</button>
+          <input id="DeckProgress" type="range" min="0" max="100" value="0" />
+        </div>
+      </section>
+
+      <aside class="stack effects-column">
+        <section class="panel">
+          <div class="panel-heading"><div><p class="eyebrow">Efectos</p><h2>Soundboard</h2></div></div>
+          <div id="SoundboardGrid" class="soundboard-grid"></div>
+        </section>
+        <section class="panel operational-note">
+          <p class="eyebrow">Operación</p>
+          <h2>Baja latencia</h2>
+          <p>Use conexión estable, audífonos y micrófono cableado. La latencia final también depende del búfer configurado por Icecast y por el reproductor del oyente.</p>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <div id="PasswordModal" class="modal" hidden>
+    <form id="PasswordForm" class="modal-card">
+      <p class="eyebrow">Acción obligatoria</p><h2>Cambiar contraseña temporal</h2>
+      <p class="muted">Use entre 8 y 72 caracteres e incluya letras y números.</p>
+      <label>Nueva contraseña<input id="NewPassword" type="password" minlength="8" maxlength="72" autocomplete="new-password" required /></label>
+      <label>Confirmar contraseña<input id="ConfirmPassword" type="password" minlength="8" maxlength="72" autocomplete="new-password" required /></label>
+      <button class="button primary" type="submit">Guardar contraseña</button>
+      <p id="PasswordError" class="form-error" role="alert"></p>
+    </form>
+  </div>
+
+  <div id="AdminModal" class="modal" hidden>
+    <section class="modal-card wide">
+      <div class="modal-heading"><div><p class="eyebrow">Administración</p><h2>Usuarios operadores</h2></div><button id="BtnCloseAdmin" class="icon-button" type="button">×</button></div>
+      <form id="CreateUserForm" class="create-user-form">
+        <label>Correo del operador<input id="NewUserEmail" type="email" maxlength="254" required /></label>
+        <label>Contraseña temporal<input id="NewUserPassword" type="password" minlength="8" maxlength="72" required /></label>
+        <button class="button primary" type="submit">Crear operador</button>
+      </form>
+      <p class="muted">Los usuarios nuevos solo pueden transmitir y deben cambiar su contraseña temporal en el primer acceso web. No es posible crear otros administradores.</p>
+      <div id="UsersList" class="users-list"></div>
+      <p id="AdminError" class="form-error" role="alert"></p>
+    </section>
+  </div>
+
+  <div id="DeckDeleteModal" class="modal" hidden>
+    <section class="modal-card compact-card">
+      <h2>Eliminar pista</h2><p>Se quitará <strong id="DeckDeleteTrackName"></strong> de la cola local.</p>
+      <div class="button-grid"><button id="BtnCancelDeckDelete" class="button quiet" type="button">Cancelar</button><button id="BtnConfirmDeckDelete" class="button danger" type="button">Eliminar</button></div>
+      <button id="BtnCloseDeckDeleteModal" class="visually-hidden" type="button">Cerrar</button>
+    </section>
+  </div>
+
+  <script src="/js/audio-engine.js"></script>
+  <script src="/js/soundboard.js"></script>
+  <script src="/js/rayo-deck.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

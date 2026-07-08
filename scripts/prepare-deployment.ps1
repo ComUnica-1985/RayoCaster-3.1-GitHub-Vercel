@@ -28,3 +28,4 @@ $content | Set-Content -LiteralPath $output -Encoding utf8
 Write-Host "Archivo privado creado: $output" -ForegroundColor Green
 Write-Host "No lo agregue a Git ni lo comparta." -ForegroundColor Yellow
 
+
